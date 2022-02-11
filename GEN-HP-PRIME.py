@@ -20,7 +20,7 @@ def esArchivoEditado (nombreArchivo):
 def esNombreReservado(nombreArchivo):
     #verifica si esta el la lista de excepciones
     #valores a no tomar en cuenta
-    ListaExcepciones=["README.md",".gitignore",".git", "LICENSE","pycache","GEN-HP-PRIME.py","icon.png","GEN-PROGR"]
+    ListaExcepciones=["README.md",".gitignore",".git", "LICENSE","pycache","GEN-HP-PRIME.py","icon.png","GENER-HP-PRIME"]
     try:
         ListaExcepciones.index(nombreArchivo)
         return True
