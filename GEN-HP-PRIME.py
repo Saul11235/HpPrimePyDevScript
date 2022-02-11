@@ -14,7 +14,8 @@ def esArchivoEditado (nombreArchivo):
         return(False)
     else:
         reves=nombreArchivo[::-1]
-        if reves[0]=="p" and reves[1]=="w" and reves[2]=="s" and reves[3]==".":return(True)
+        cadena=reves[0:4]
+        if cadena=="pws.":return(True)
         else:return(False)
 #--------------------------------------------------------------------
 def esNombreReservado(nombreArchivo):
@@ -33,8 +34,8 @@ def pideNoSerConsiderada(nombreArchivo):
     if len(nombreArchivo)<7:
         return(False)
     else:
-        nom=nombreArchivo
-        if nom[0]=="N" and nom[1]=="o" and nom[2]=="C" and nom[3]=="o" and nom[4]=="n" and nom[5]=="s" and nom[6]=="-":return(True)
+        cadena=nombreArchivo[0:7]
+        if cadena=="NoCons-":return(True)
         else:return(False)
 #-------------------------------------------------------------------
 def filtrarNombre(nombre):
