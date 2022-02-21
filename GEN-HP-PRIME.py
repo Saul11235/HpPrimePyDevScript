@@ -5,6 +5,7 @@
 #listo para ser ejecutado en una HP prime
 
 from os import listdir,getcwd,path,system,chdir
+from platform import system as platsys
 #--------------------------------------------------------------------
 #
 # PORQUE UN ENGORROSO SCRIPT?!!!
@@ -86,9 +87,11 @@ from os import listdir,getcwd,path,system,chdir
 # VARIABLES DE USO PARA ORGANIZAR LA INFORMACION
 #
 #---------------------------------------------------------------------
-class analisis:
+class ClaseAnalisis:
     def __init__(self):
+        self.__VaciarMemoria()
         #direcciones de los archivos considerados
+    def __VaciarMemoria(self):    
         self.__DireccionesVariables=[] #lista con direcciones de archivos de variables
         self.__DireccionesFunciones=[] #lista con direcciones de archivos de funciones
         self.__DireccionesVistas=[]    #lista con direcciones de archivos de vistas
@@ -105,6 +108,7 @@ class analisis:
         self.__CodigoVariables=[]      #codigo original
         self.__CodigoVistas=[]         #codigo original
         self.__CodigoIconos=[]         #cofigo generado algoritmo
+
     #---------------------------------------------------------------------
     def __TieneFinal (self,nombreArchivo,cadenaFinal):
         #Detecta el final de un nombre de archivo o el final de una extension
@@ -291,12 +295,58 @@ class analisis:
             chdir(x)
             self.CicloRegistroArchivos()
             chdir("..")
+#=====================================================================================
+class ClaseTerminal:
+    #----------------------------------------------------
+    def __init__(self,objetoAnalisis):
+        self.objeto=objetoAnalisis
+        self.directorio=getcwd() 
+        self.nombrePaquete="PAQUETEE"
+        self.__comandoAnterior=""
+        self.__comtandoTrasAnterior=""
+        self.__comandoNuevo=True #ojo si se pone enter dos veces el comando es salir
+        pass
+    #----------------------------------------------------
+    def __limpiar(self):
+        if platsys()=="Windows": system("cls")
+        else: system("clear")
+    #---------------------------------------------------
+    def __cabeceraConsola(self):
+        self.__limpiar()
+        print("""
+      ((((      GEN-HP-PRIME
+      ((((      by/por Edwin Saul / @Saul11235
+      ))))      
+    _ .---.     NAME PACKAGE /NOMBRE PAQUETE:
+   ( |`---'|    """ +self.nombrePaquete+ """
+    \|     |    
+    : .___, :   For/Para Hp Prime
+     `-----'
+                UBICACION/DIRECTORY
+                """+self.directorio+"""
+
+                """)
+    #---------------------------------------------------
+    def COMANDO_SALIR(self):self.__limpiar();exit()
+    def COMANDO_VIFM(self):system("vifm "+self.directorio)
+        
+    def LanzarConsola(self):
+        while True:
+            self.__cabeceraConsola()
+            comando=input("\n >> ")
+            if comando=="q":
+                self.COMANDO_SALIR()
+            elif comando=="f":
+                system("vifm "+self.directorio)
+            elif comando=="r":
+                self.objeto.CicloRegistroArchivos()
+
 # Modo terminal_________
 if __name__=="__main__":
     #rutina comando
-    print("\n>>> Generar Programa Para HpPrime")
-    objeto=analisis()
-    objeto.CicloRegistroArchivos()
+    Analisis=ClaseAnalisis()
+    Terminal=ClaseTerminal(Analisis)
+    Terminal.LanzarConsola()
         
 
 
