@@ -6,6 +6,7 @@
 
 from os import listdir,getcwd,path,system,chdir
 from platform import system as platsys
+from time import sleep
 #--------------------------------------------------------------------
 #
 # PORQUE UN ENGORROSO SCRIPT?!!!
@@ -265,7 +266,7 @@ class ClaseAnalisis:
         #CodigoVistas=[]         #codigo original
         pass
 #---------------------------------------------------------------------
-    def CicloRegistroArchivos(self): #registra los archivos en el repositorio actual
+    def __CicloRegistroArchivos(self): #registra los archivos en el repositorio actual
         #paso 1. ejecutar todos los archivos Run- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX 
         for x in self.__obtenerScriptsRun():
             print("   >> Ejecutar: "+str(x))
@@ -293,8 +294,11 @@ class ClaseAnalisis:
         for x in self.__obtenerSubcarpetas():
             print("\n >>> Entrando a subcarpetas: "+str(x))
             chdir(x)
-            self.CicloRegistroArchivos()
+            self.__CicloRegistroArchivos()
             chdir("..")
+    def scan(self):
+        self.__VaciarMemoria()
+        self.__CicloRegistroArchivos()
 #=====================================================================================
 class ClaseTerminal:
     #----------------------------------------------------
@@ -302,8 +306,9 @@ class ClaseTerminal:
         self.objeto=objetoAnalisis
         self.directorio=getcwd() 
         self.nombrePaquete="PAQUETEE"
-        self.__comandoAnterior=""
-        self.__comtandoTrasAnterior=""
+        self.__mensajeConsola=""
+        self.__comandoAnterior="X"
+        self.__comtandoTrasAnterior="X"
         self.__comandoNuevo=True #ojo si se pone enter dos veces el comando es salir
         pass
     #----------------------------------------------------
@@ -325,23 +330,53 @@ class ClaseTerminal:
                 UBICACION/DIRECTORY
                 """+self.directorio+"""
 
+                """+self.__mensajeConsola+"""
                 """)
     #---------------------------------------------------
-    def COMANDO_SALIR(self):self.__limpiar();exit()
-    def COMANDO_VIFM(self):system("vifm "+self.directorio)
+    def COMANDO_SALIR(self):
+        self.__limpiar()
+        exit()
+    #----------------------------------------------------    
+    def COMANDO_VIFM(self):
+        system("vifm "+self.directorio)
+    #----------------------------------------------------    
+    def COMANDO_SCAN(self):
+        self.objeto.scan()
+        sleep(0.1)
+    #----------------------------------------------------
+    def COMANDO_HELP(self):
+        self.__limpiar()
+        print("  HELP ")
+        print("    Q - quit/salir")
+        print("    H - help")
+        print("    S - scan files ")
+        print("    F - open file explorer vifm  ")
+        input()
+    #----------------------------------------------------
+    def LEERCOMANDO(self,texto):
+        #lee un comando y ejecuta la funcion self.COMANDO correspondiente
+        comando=texto
+        self.__mensajeConsola=""
+        if comando=="q":
+            self.COMANDO_SALIR()
+        elif comando=="f":
+            self.COMANDO_VIFM()
+        elif comando=="r":
+            self.COMANDO_SCAN()
+        elif comando=="H":
+            self.COMANDO_HELP()
+        elif comando=="":
+            pass
+        else:
+            self.__mensajeConsola=comando+"??!! -  H for Help"
+    #----------------------------------------------------
         
     def LanzarConsola(self):
         while True:
             self.__cabeceraConsola()
             comando=input("\n >> ")
-            if comando=="q":
-                self.COMANDO_SALIR()
-            elif comando=="f":
-                system("vifm "+self.directorio)
-            elif comando=="r":
-                self.objeto.CicloRegistroArchivos()
-
-# Modo terminal_________
+            self.LEERCOMANDO(comando)
+            # Modo terminal_________
 if __name__=="__main__":
     #rutina comando
     Analisis=ClaseAnalisis()
