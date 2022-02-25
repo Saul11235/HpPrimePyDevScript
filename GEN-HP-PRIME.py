@@ -7,6 +7,7 @@
 from os import listdir,getcwd,path,system,chdir
 from platform import system as platsys
 from time import sleep
+from sys import version_info
 #--------------------------------------------------------------------
 #
 # PORQUE UN ENGORROSO SCRIPT?!!!
@@ -88,6 +89,19 @@ from time import sleep
 # VARIABLES DE USO PARA ORGANIZAR LA INFORMACION
 #
 #---------------------------------------------------------------------
+def input_py(cadenaInicio):
+    if version_info[:2] <= (2, 7):
+        return(str(raw_input(cadenaInicio)))
+    else:
+        return(input(cadenaInicio))
+#---------------------------------------------------------------------
+def listdir_py():
+    if version_info[:2] <= (2, 7):
+        return( listdir(getcwd()) )
+    else:
+        return(listdir())
+#
+#---------------------------------------------------------------------
 class ClaseAnalisis:
     def __init__(self):
         self.__VaciarMemoria()
@@ -167,7 +181,7 @@ class ClaseAnalisis:
     # Devuelve todos los archivos y subcarpetas de una carpeta
     def __contenidosCarpetas(self):
         listaNombres=[] #lista de nombres a considerar
-        for x in listdir():
+        for x in listdir_py():
             if self.__filtrarNombre(x):
                 listaNombres.append(x)
         #separar los nombres
@@ -316,7 +330,7 @@ class ClaseTerminal:
         if platsys()=="Windows": system("cls")
         else: system("clear")
     #---------------------------------------------------
-    def __cabeceraConsola(self):
+    def cabeceraConsola(self):
         self.__limpiar()
         print("""
       ((((      GEN-HP-PRIME
@@ -351,37 +365,53 @@ class ClaseTerminal:
         print("    H - help")
         print("    S - scan files ")
         print("    F - open file explorer vifm  ")
-        input()
+        input_py("")
+    #---------------------------------------------------
+    def COMANDO_VERSION (self):
+        self.__limpiar()
+        print(" VERSION PYTHON")
+        print("")
+        print("  "+str(version_info))
+        input_py("")
     #----------------------------------------------------
-    def LEERCOMANDO(self,texto):
+    def LEERCOMANDO(self,textoEntrada):
         #lee un comando y ejecuta la funcion self.COMANDO correspondiente
-        comando=texto
+        listatexto=textoEntrada.upper().split()
+        texto=""
+        if not(len(listatexto)==0):
+            texto=listatexto[0]
         self.__mensajeConsola=""
-        if comando=="q":
+        if texto=="Q":
             self.COMANDO_SALIR()
-        elif comando=="f":
+        elif texto=="F":
             self.COMANDO_VIFM()
-        elif comando=="r":
+        elif texto=="S":    
             self.COMANDO_SCAN()
-        elif comando=="H":
+        elif texto=="H":
             self.COMANDO_HELP()
-        elif comando=="":
+        elif texto=="V":
+            self.COMANDO_VERSION()
+        elif texto=="":
             pass
         else:
-            self.__mensajeConsola=comando+"??!! -  H for Help"
+            self.__mensajeConsola=str(texto)+"??!! -  H for Help"
     #----------------------------------------------------
         
-    def LanzarConsola(self):
+    def mainLoop(self):
         while True:
-            self.__cabeceraConsola()
-            comando=input("\n >> ")
-            self.LEERCOMANDO(comando)
+            self.cabeceraConsola()
+            comandoterminal=input_py(" >> ") 
+            self.LEERCOMANDO(comandoterminal)
             # Modo terminal_________
+
+#====================================================================
+#====================================================================
+
 if __name__=="__main__":
     #rutina comando
     Analisis=ClaseAnalisis()
     Terminal=ClaseTerminal(Analisis)
-    Terminal.LanzarConsola()
+    Terminal.mainLoop()
         
 
 
